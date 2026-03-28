@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель керування | Технічний Ліцей</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .nav-item .icon {
+            font-size: 20px;
+            width: 30px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .welcome {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .logout-btn {
+            background: #ff4757;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #ff6b81;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* Content Panels */
+        .content-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: none;
+        }
+        
+        .content-panel.active {
+            display: block;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .panel-header h2 {
+            font-size: 22px;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff6b81;
+        }
+        
+        .btn-warning {
+            background: #ffa502;
+            color: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 20px;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar .nav-item span:last-child {
+                display: none;
+            }
+            .sidebar-header h2, .sidebar-header p {
+                display: none;
+            }
+            .main-content {
+                margin-left: 70px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>🏫 Технічний Ліцей</h2>
+            <p>Адмін панель</p>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" data-page="dashboard">
+                <span class="icon">📊</span>
+                <span>Панель керування</span>
+            </div>
+            <div class="nav-item" data-page="teachers">
+                <span class="icon">👨‍🏫</span>
+                <span>Вчителі</span>
+            </div>
+            <div class="nav-item" data-page="students">
+                <span class="icon">👨‍🎓</span>
+                <span>Учні</span>
+            </div>
+            <div class="nav-item" data-page="schedule">
+                <span class="icon">📚</span>
+                <span>Розклад</span>
+            </div>
+            <div class="nav-item" data-page="substitutions">
+                <span class="icon">🔄</span>
+                <span>Заміни</span>
+            </div>
+            <div class="nav-item" data-page="extra">
+                <span class="icon">📘</span>
+                <span>Додаткові</span>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <span class="icon">⚙️</span>
+                <span>Налаштування</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="welcome">👋 Вітаємо!</div>
+            <a href="/logout" class="logout-btn">🚪 Вийти</a>
+        </div>
+        
+        <div id="dashboard-panel" class="content-panel active">
+            <div class="stats-grid" id="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍🏫</div>
+                    <div class="stat-value" id="stat-teachers">0</div>
+                    <div class="stat-label">Вчителів</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍🎓</div>
+                    <div class="stat-value" id="stat-students">0</div>
+                    <div class="stat-label">Учнів</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-value" id="stat-lessons">0</div>
+                    <div class="stat-label">Уроків</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value" id="stat-substitutions">0</div>
+                    <div class="stat-label">Замін</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📘</div>
+                    <div class="stat-value" id="stat-extra">0</div>
+                    <div class="stat-label">Додаткових</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏫</div>
+                    <div class="stat-value" id="stat-classes">0</div>
+                    <div class="stat-label">Класів</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="stat-card" style="cursor: pointer;" onclick="syncUsers()">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value">Синхронізація</div>
+                    <div class="stat-label">Синхронізувати користувачів</div>
+                </div>
+                <div class="stat-card" style="cursor: pointer;" onclick="createBackup()">
+                    <div class="stat-icon">💾</div>
+                    <div class="stat-value">Резервне копіювання</div>
+                    <div class="stat-label">Створити копію БД</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="teachers-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>👨‍🏫 Керування вчителями</h2>
+                <button class="btn btn-primary" onclick="openTeacherModal()">➕ Додати вчителя</button>
+            </div>
+            <div id="teachers-table-container">
+                <div class="loading">Завантаження...</div>
+            </div>
+        </div>
+        
+        <div id="students-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>👨‍🎓 Керування учнями</h2>
+                <button class="btn btn-primary" onclick="openStudentModal()">➕ Додати учня</button>
+            </div>
+            <div id="students-table-container">
+                <div class="loading">Завантаження...</div>
+            </div>
+        </div>
+        
+        <div id="schedule-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>📚 Керування розкладом</h2>
+                <button class="btn btn-primary" onclick="openLessonModal()">➕ Додати урок</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <select id="schedule-day-select" onchange="loadSchedule()" style="padding: 10px; border-radius: 8px;">
+                    <option value="Понеділок">Понеділок</option>
+                    <option value="Вівторок">Вівторок</option>
+                    <option value="Середа">Середа</option>
+                    <option value="Четвер">Четвер</option>
+                    <option value="П'ятниця">П'ятниця</option>
+                </select>
+                <select id="schedule-group-select" onchange="loadSchedule()" style="padding: 10px; border-radius: 8px; margin-left: 10px;">
+                    <option value="all">Всі класи</option>
+                </select>
+            </div>
+            <div id="schedule-table-container">
+                <div class="loading">Завантаження...</div>
+            </div>
+        </div>
+        
+        <div id="substitutions-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>🔄 Керування замінами</h2>
+                <button class="btn btn-primary" onclick="openSubstitutionModal()">➕ Додати заміну</button>
+            </div>
+            <div id="substitutions-table-container">
+                <div class="loading">Завантаження...</div>
+            </div>
+        </div>
+        
+        <div id="extra-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>📘 Додаткові заняття</h2>
+                <button class="btn btn-primary" onclick="openExtraLessonModal()">➕ Додати додаткове</button>
+            </div>
+            <div id="extra-table-container">
+                <div class="loading">Завантаження...</div>
+            </div>
+        </div>
+        
+        <div id="settings-panel" class="content-panel">
+            <div class="panel-header">
+                <h2>⚙️ Налаштування</h2>
+            </div>
+            <div style="max-width: 500px;">
+                <h3 style="margin-bottom: 20px;">🔐 Зміна паролю</h3>
+                <div class="form-group">
+                    <label>Старий пароль</label>
+                    <input type="password" id="old-password" placeholder="Введіть старий пароль">
+                </div>
+                <div class="form-group">
+                    <label>Новий логін (необов'язково)</label>
+                    <input type="text" id="new-login" placeholder="Новий логін">
+                </div>
+                <div class="form-group">
+                    <label>Новий пароль (необов'язково)</label>
+                    <input type="password" id="new-password" placeholder="Новий пароль">
+                </div>
+                <button class="btn btn-primary" onclick="changePassword()">Змінити</button>
+                
+                <hr style="margin: 30px 0;">
+                
+                <h3 style="margin-bottom: 20px;">💾 Резервні копії</h3>
+                <button class="btn btn-primary" onclick="createBackup()">Створити копію</button>
+                <div id="backups-list" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальні вікна -->
+    <div id="teacher-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Додати вчителя</h3>
+                <span class="close-modal" onclick="closeModal('teacher-modal')">&times;</span>
+            </div>
+            <form id="teacher-form" onsubmit="submitTeacher(event)">
+                <div class="form-group">
+                    <label>ПІБ</label>
+                    <input type="text" id="teacher-full-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Логін</label>
+                    <input type="text" id="teacher-login" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="teacher-password" required>
+                </div>
+                <div class="form-group">
+                    <label>Предмет</label>
+                    <input type="text" id="teacher-subject">
+                </div>
+                <div class="form-group">
+                    <label>Класне керівництво</label>
+                    <input type="text" id="teacher-group" placeholder="напр. 8-А або залиште порожнім">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Додати</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Додати учня</h3>
+                <span class="close-modal" onclick="closeModal('student-modal')">&times;</span>
+            </div>
+            <form id="student-form" onsubmit="submitStudent(event)">
+                <div class="form-group">
+                    <label>ПІБ</label>
+                    <input type="text" id="student-full-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Логін</label>
+                    <input type="text" id="student-login" required>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="student-password" required>
+                </div>
+                <div class="form-group">
+                    <label>Клас</label>
+                    <select id="student-group" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Підгрупа</label>
+                    <select id="student-subgroup">
+                        <option value="">Весь клас</option>
+                        <option value="1">Підгрупа 1</option>
+                        <option value="2">Підгрупа 2</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Додати</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="lesson-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Додати урок</h3>
+                <span class="close-modal" onclick="closeModal('lesson-modal')">&times;</span>
+            </div>
+            <form id="lesson-form" onsubmit="submitLesson(event)">
+                <div class="form-group">
+                    <label>День</label>
+                    <select id="lesson-day" required>
+                        <option value="Понеділок">Понеділок</option>
+                        <option value="Вівторок">Вівторок</option>
+                        <option value="Середа">Середа</option>
+                        <option value="Четвер">Четвер</option>
+                        <option value="П'ятниця">П'ятниця</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Номер уроку (1-8)</label>
+                    <input type="number" id="lesson-num" min="1" max="8" required>
+                </div>
+                <div class="form-group">
+                    <label>Предмет</label>
+                    <input type="text" id="lesson-subject" required>
+                </div>
+                <div class="form-group">
+                    <label>Клас</label>
+                    <select id="lesson-group" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Підгрупа</label>
+                    <select id="lesson-subgroup">
+                        <option value="">Весь клас</option>
+                        <option value="1">Підгрупа 1</option>
+                        <option value="2">Підгрупа 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Вчитель</label>
+                    <input type="text" id="lesson-teacher" list="teachers-list" required>
+                    <datalist id="teachers-list"></datalist>
+                </div>
+                <div class="form-group">
+                    <label>Кабінет</label>
+                    <input type="text" id="lesson-room">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="lesson-extra"> Додаткове заняття
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Додати</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="substitution-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Додати заміну</h3>
+                <span class="close-modal" onclick="closeModal('substitution-modal')">&times;</span>
+            </div>
+            <form id="substitution-form" onsubmit="submitSubstitution(event)">
+                <div class="form-group">
+                    <label>День</label>
+                    <select id="substitution-day" required>
+                        <option value="Понеділок">Понеділок</option>
+                        <option value="Вівторок">Вівторок</option>
+                        <option value="Середа">Середа</option>
+                        <option value="Четвер">Четвер</option>
+                        <option value="П'ятниця">П'ятниця</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Номер уроку</label>
+                    <input type="number" id="substitution-lesson" min="1" max="8" required>
+                </div>
+                <div class="form-group">
+                    <label>Клас</label>
+                    <select id="substitution-group" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Підгрупа</label>
+                    <select id="substitution-subgroup">
+                        <option value="">Весь клас</option>
+                        <option value="1">Підгрупа 1</option>
+                        <option value="2">Підгрупа 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Старий предмет</label>
+                    <input type="text" id="substitution-old-subject" required>
+                </div>
+                <div class="form-group">
+                    <label>Старий вчитель</label>
+                    <input type="text" id="substitution-old-teacher" required>
+                </div>
+                <div class="form-group">
+                    <label>Старий кабінет</label>
+                    <input type="text" id="substitution-old-room">
+                </div>
+                <div class="form-group">
+                    <label>Новий предмет</label>
+                    <input type="text" id="substitution-new-subject" required>
+                </div>
+                <div class="form-group">
+                    <label>Новий вчитель</label>
+                    <input type="text" id="substitution-new-teacher" list="teachers-list" required>
+                </div>
+                <div class="form-group">
+                    <label>Новий кабінет</label>
+                    <input type="text" id="substitution-new-room">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Додати</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="extra-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Додати додаткове заняття</h3>
+                <span class="close-modal" onclick="closeModal('extra-modal')">&times;</span>
+            </div>
+            <form id="extra-form" onsubmit="submitExtraLesson(event)">
+                <div class="form-group">
+                    <label>День</label>
+                    <select id="extra-day" required>
+                        <option value="Понеділок">Понеділок</option>
+                        <option value="Вівторок">Вівторок</option>
+                        <option value="Середа">Середа</option>
+                        <option value="Четвер">Четвер</option>
+                        <option value="П'ятниця">П'ятниця</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Предмет</label>
+                    <input type="text" id="extra-subject" required>
+                </div>
+                <div class="form-group">
+                    <label>Вчитель</label>
+                    <input type="text" id="extra-teacher" list="teachers-list" required>
+                </div>
+                <div class="form-group">
+                    <label>Кабінет</label>
+                    <input type="text" id="extra-room">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Додати</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let currentEditId = null;
+        let currentEditType = null;
+        
+        // Завантаження статистики
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                document.getElementById('stat-teachers').textContent = data.teachers;
+                document.getElementById('stat-students').textContent = data.students;
+                document.getElementById('stat-lessons').textContent = data.lessons;
+                document.getElementById('stat-substitutions').textContent = data.substitutions;
+                document.getElementById('stat-extra').textContent = data.extra_lessons;
+                document.getElementById('stat-classes').textContent = data.classes;
+            } catch (error) {
+                console.error('Помилка завантаження статистики:', error);
+            }
+        }
+        
+        // Завантаження списку класів
+        async function loadClasses() {
+            try {
+                const response = await fetch('/api/classes');
+                const classes = await response.json();
+                
+                const selects = ['student-group', 'lesson-group', 'substitution-group'];
+                selects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.innerHTML = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+                    }
+                });
+                
+                const scheduleGroup = document.getElementById('schedule-group-select');
+                if (scheduleGroup) {
+                    scheduleGroup.innerHTML = '<option value="all">Всі класи</option>' + 
+                        classes.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Помилка завантаження класів:', error);
+            }
+        }
+        
+        // Завантаження списку вчителів
+        async function loadTeachersList() {
+            try {
+                const response = await fetch('/api/teachers');
+                const teachers = await response.json();
+                const teachersNames = teachers.map(t => t.full_name);
+                
+                const datalist = document.getElementById('teachers-list');
+                if (datalist) {
+                    datalist.innerHTML = teachersNames.map(n => `<option value="${n}">`).join('');
+                }
+            } catch (error) {
+                console.error('Помилка завантаження вчителів:', error);
+            }
+        }
+        
+        // Завантаження вчителів
+        async function loadTeachers() {
+            try {
+                const response = await fetch('/api/teachers');
+                const teachers = await response.json();
+                const container = document.getElementById('teachers-table-container');
+                
+                if (teachers.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає доданих вчителів</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ПІБ</th>
+                                <th>Логін</th>
+                                <th>Предмет</th>
+                                <th>Класне керівництво</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${teachers.map(t => `
+                                <tr>
+                                    <td>${escapeHtml(t.full_name)}</td>
+                                    <td><code>${escapeHtml(t.login)}</code></td>
+                                    <td>${escapeHtml(t.subject)}</td>
+                                    <td>${escapeHtml(t.class_teacher)}</td>
+                                    <td class="action-btns">
+                                        <button class="btn btn-primary btn-sm" onclick="editTeacher(${t.id})">✏️</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteTeacher(${t.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження вчителів:', error);
+                document.getElementById('teachers-table-container').innerHTML = '<div class="empty">❌ Помилка завантаження</div>';
+            }
+        }
+        
+        // Завантаження учнів
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/students');
+                const students = await response.json();
+                const container = document.getElementById('students-table-container');
+                
+                if (students.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає доданих учнів</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ПІБ</th>
+                                <th>Логін</th>
+                                <th>Клас</th>
+                                <th>Підгрупа</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${students.map(s => `
+                                <tr>
+                                    <td>${escapeHtml(s.full_name)}</td>
+                                    <td><code>${escapeHtml(s.login)}</code></td>
+                                    <td>${escapeHtml(s.group_name)}</td>
+                                    <td>${s.subgroup ? `Підгрупа ${s.subgroup}` : 'Весь клас'}</td>
+                                    <td class="action-btns">
+                                        <button class="btn btn-primary btn-sm" onclick="editStudent(${s.id})">✏️</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження учнів:', error);
+                document.getElementById('students-table-container').innerHTML = '<div class="empty">❌ Помилка завантаження</div>';
+            }
+        }
+        
+        // Завантаження розкладу
+        async function loadSchedule() {
+            const day = document.getElementById('schedule-day-select').value;
+            const group = document.getElementById('schedule-group-select').value;
+            
+            try {
+                let url = group === 'all' ? `/api/all_schedule?day=${encodeURIComponent(day)}` : `/api/schedule?day=${encodeURIComponent(day)}&group=${encodeURIComponent(group)}`;
+                const response = await fetch(url);
+                const lessons = await response.json();
+                const container = document.getElementById('schedule-table-container');
+                
+                if (lessons.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає уроків на цей день</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Час</th>
+                                <th>Предмет</th>
+                                <th>Клас</th>
+                                <th>Вчитель</th>
+                                <th>Кабінет</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${lessons.map(l => `
+                                <tr>
+                                    <td>${l.lesson_num}</td>
+                                    <td>${l.time || '-'}</td>
+                                    <td>${escapeHtml(l.subject)}</td>
+                                    <td>${escapeHtml(l.group_name)}${l.subgroup ? ` (підгр.${l.subgroup})` : ''}</td>
+                                    <td>${escapeHtml(l.teacher)}</td>
+                                    <td>${escapeHtml(l.room)}</td>
+                                    <td class="action-btns">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження розкладу:', error);
+                document.getElementById('schedule-table-container').innerHTML = '<div class="empty">❌ Помилка завантаження</div>';
+            }
+        }
+        
+        // Завантаження замін
+        async function loadSubstitutions() {
+            try {
+                const response = await fetch('/api/substitutions');
+                const substitutions = await response.json();
+                const container = document.getElementById('substitutions-table-container');
+                
+                if (substitutions.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає замін</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>День</th>
+                                <th>Урок</th>
+                                <th>Клас</th>
+                                <th>Було</th>
+                                <th>Стало</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${substitutions.map(s => `
+                                <tr>
+                                    <td>${escapeHtml(s.day)}</td>
+                                    <td>${s.lesson_num}</td>
+                                    <td>${escapeHtml(s.group_name)}${s.subgroup ? ` (підгр.${s.subgroup})` : ''}</td>
+                                    <td>${escapeHtml(s.old_subject)}<br><small>${escapeHtml(s.old_teacher)}</small></td>
+                                    <td>${escapeHtml(s.new_subject)}<br><small>${escapeHtml(s.new_teacher)}</small></td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteSubstitution(${s.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження замін:', error);
+                document.getElementById('substitutions-table-container').innerHTML = '<div class="empty">❌ Помилка завантаження</div>';
+            }
+        }
+        
+        // Завантаження додаткових
+        async function loadExtraLessons() {
+            try {
+                const response = await fetch('/api/extra_lessons');
+                const lessons = await response.json();
+                const container = document.getElementById('extra-table-container');
+                
+                if (lessons.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає додаткових занять</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>День</th>
+                                <th>Предмет</th>
+                                <th>Вчитель</th>
+                                <th>Кабінет</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${lessons.map(l => `
+                                <tr>
+                                    <td>${escapeHtml(l.day)}</td>
+                                    <td>${escapeHtml(l.subject)}</td>
+                                    <td>${escapeHtml(l.teacher)}</td>
+                                    <td>${escapeHtml(l.room)}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteExtraLesson(${l.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження додаткових:', error);
+                document.getElementById('extra-table-container').innerHTML = '<div class="empty">❌ Помилка завантаження</div>';
+            }
+        }
+        
+        // Завантаження резервних копій
+        async function loadBackups() {
+            try {
+                const response = await fetch('/api/backups');
+                const backups = await response.json();
+                const container = document.getElementById('backups-list');
+                
+                if (backups.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 Немає резервних копій</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Назва</th>
+                                <th>Дата</th>
+                                <th>Розмір</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${backups.map(b => `
+                                <tr>
+                                    <td>${escapeHtml(b.name)}</td>
+                                    <td>${new Date(b.modified).toLocaleString()}</td>
+                                    <td>${(b.size / 1024).toFixed(2)} KB</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="restoreBackup('${b.name}')">↩️ Відновити</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Помилка завантаження резервних копій:', error);
+            }
+        }
+        
+        // Додавання вчителя
+        async function submitTeacher(event) {
+            event.preventDefault();
+            
+            const data = {
+                full_name: document.getElementById('teacher-full-name').value,
+                login: document.getElementById('teacher-login').value,
+                password: document.getElementById('teacher-password').value,
+                subject: document.getElementById('teacher-subject').value,
+                group_name: document.getElementById('teacher-group').value
+            };
+            
+            try {
+                const response = await fetch('/api/add_teacher', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('teacher-modal');
+                    document.getElementById('teacher-form').reset();
+                    loadTeachers();
+                    loadStats();
+                    alert('✅ Вчителя додано успішно!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при додаванні вчителя');
+            }
+        }
+        
+        // Додавання учня
+        async function submitStudent(event) {
+            event.preventDefault();
+            
+            const data = {
+                full_name: document.getElementById('student-full-name').value,
+                login: document.getElementById('student-login').value,
+                password: document.getElementById('student-password').value,
+                group_name: document.getElementById('student-group').value,
+                subgroup: document.getElementById('student-subgroup').value || null
+            };
+            
+            try {
+                const response = await fetch('/api/add_student', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('student-modal');
+                    document.getElementById('student-form').reset();
+                    loadStudents();
+                    loadStats();
+                    alert('✅ Учня додано успішно!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при додаванні учня');
+            }
+        }
+        
+        // Додавання уроку
+        async function submitLesson(event) {
+            event.preventDefault();
+            
+            const data = {
+                day: document.getElementById('lesson-day').value,
+                lesson_num: parseInt(document.getElementById('lesson-num').value),
+                subject: document.getElementById('lesson-subject').value,
+                group_name: document.getElementById('lesson-group').value,
+                subgroup: document.getElementById('lesson-subgroup').value || null,
+                teacher: document.getElementById('lesson-teacher').value,
+                room: document.getElementById('lesson-room').value,
+                is_extra: document.getElementById('lesson-extra').checked
+            };
+            
+            try {
+                const response = await fetch('/api/add_lesson', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('lesson-modal');
+                    document.getElementById('lesson-form').reset();
+                    loadSchedule();
+                    loadStats();
+                    alert('✅ Урок додано успішно!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при додаванні уроку');
+            }
+        }
+        
+        // Додавання заміни
+        async function submitSubstitution(event) {
+            event.preventDefault();
+            
+            const data = {
+                day: document.getElementById('substitution-day').value,
+                lesson_num: parseInt(document.getElementById('substitution-lesson').value),
+                group_name: document.getElementById('substitution-group').value,
+                subgroup: document.getElementById('substitution-subgroup').value || null,
+                old_subject: document.getElementById('substitution-old-subject').value,
+                old_teacher: document.getElementById('substitution-old-teacher').value,
+                old_room: document.getElementById('substitution-old-room').value,
+                new_subject: document.getElementById('substitution-new-subject').value,
+                new_teacher: document.getElementById('substitution-new-teacher').value,
+                new_room: document.getElementById('substitution-new-room').value
+            };
+            
+            try {
+                const response = await fetch('/api/add_substitution', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('substitution-modal');
+                    document.getElementById('substitution-form').reset();
+                    loadSubstitutions();
+                    loadStats();
+                    alert('✅ Заміну додано успішно!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при додаванні заміни');
+            }
+        }
+        
+        // Додавання додаткового заняття
+        async function submitExtraLesson(event) {
+            event.preventDefault();
+            
+            const data = {
+                day: document.getElementById('extra-day').value,
+                subject: document.getElementById('extra-subject').value,
+                teacher: document.getElementById('extra-teacher').value,
+                room: document.getElementById('extra-room').value,
+                lesson_num: 9
+            };
+            
+            try {
+                const response = await fetch('/api/add_extra_lesson', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('extra-modal');
+                    document.getElementById('extra-form').reset();
+                    loadExtraLessons();
+                    loadStats();
+                    alert('✅ Додаткове заняття додано успішно!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при додаванні заняття');
+            }
+        }
+        
+        // Видалення вчителя
+        async function deleteTeacher(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цього вчителя?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete_teacher/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadTeachers();
+                    loadStats();
+                    alert('✅ Вчителя видалено');
+                } else {
+                    alert('❌ Помилка видалення');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при видаленні');
+            }
+        }
+        
+        // Видалення учня
+        async function deleteStudent(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цього учня?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete_student/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadStudents();
+                    loadStats();
+                    alert('✅ Учня видалено');
+                } else {
+                    alert('❌ Помилка видалення');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при видаленні');
+            }
+        }
+        
+        // Видалення уроку
+        async function deleteLesson(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цей урок?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete_lesson/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadSchedule();
+                    loadStats();
+                    alert('✅ Урок видалено');
+                } else {
+                    alert('❌ Помилка видалення');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при видаленні');
+            }
+        }
+        
+        // Видалення заміни
+        async function deleteSubstitution(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цю заміну?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete_substitution/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadSubstitutions();
+                    loadStats();
+                    alert('✅ Заміну видалено');
+                } else {
+                    alert('❌ Помилка видалення');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при видаленні');
+            }
+        }
+        
+        // Видалення додаткового
+        async function deleteExtraLesson(id) {
+            if (!confirm('Ви впевнені, що хочете видалити це додаткове заняття?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete_extra_lesson/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadExtraLessons();
+                    loadStats();
+                    alert('✅ Додаткове заняття видалено');
+                } else {
+                    alert('❌ Помилка видалення');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при видаленні');
+            }
+        }
+        
+        // Синхронізація користувачів
+        async function syncUsers() {
+            if (!confirm('Це оновить таблицю users з усіма вчителями та учнями. Продовжити?')) return;
+            
+            try {
+                const response = await fetch('/api/sync_users', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Синхронізацію завершено');
+                    loadStats();
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при синхронізації');
+            }
+        }
+        
+        // Створення резервної копії
+        async function createBackup() {
+            try {
+                const response = await fetch('/api/backup', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Резервну копію створено: ${result.backup}`);
+                    loadBackups();
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при створенні копії');
+            }
+        }
+        
+        // Відновлення з резервної копії
+        async function restoreBackup(backupName) {
+            if (!confirm(`Відновити з ${backupName}? Всі поточні дані будуть замінені!`)) return;
+            
+            try {
+                const response = await fetch(`/api/restore_backup/${backupName}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Базу даних відновлено. Оновіть сторінку.');
+                    location.reload();
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при відновленні');
+            }
+        }
+        
+        // Зміна паролю
+        async function changePassword() {
+            const data = {
+                old_password: document.getElementById('old-password').value,
+                new_login: document.getElementById('new-login').value,
+                new_password: document.getElementById('new-password').value
+            };
+            
+            if (!data.old_password) {
+                alert('Введіть старий пароль');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/change_password', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Пароль змінено');
+                    document.getElementById('old-password').value = '';
+                    document.getElementById('new-login').value = '';
+                    document.getElementById('new-password').value = '';
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert('❌ Помилка при зміні паролю');
+            }
+        }
+        
+        // Відкриття модального вікна
+        function openTeacherModal() {
+            document.getElementById('teacher-form').reset();
+            document.getElementById('teacher-modal').classList.add('active');
+        }
+        
+        function openStudentModal() {
+            document.getElementById('student-form').reset();
+            document.getElementById('student-modal').classList.add('active');
+        }
+        
+        function openLessonModal() {
+            document.getElementById('lesson-form').reset();
+            document.getElementById('lesson-modal').classList.add('active');
+        }
+        
+        function openSubstitutionModal() {
+            document.getElementById('substitution-form').reset();
+            document.getElementById('substitution-modal').classList.add('active');
+        }
+        
+        function openExtraLessonModal() {
+            document.getElementById('extra-form').reset();
+            document.getElementById('extra-modal').classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Закриття модального вікна при кліку на фон
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+        
+        // Навігація
+        function navigateTo(page) {
+            document.querySelectorAll('.content-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`${page}-panel`).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            if (page === 'dashboard') {
+                loadStats();
+            } else if (page === 'teachers') {
+                loadTeachers();
+            } else if (page === 'students') {
+                loadStudents();
+            } else if (page === 'schedule') {
+                loadSchedule();
+            } else if (page === 'substitutions') {
+                loadSubstitutions();
+            } else if (page === 'extra') {
+                loadExtraLessons();
+            } else if (page === 'settings') {
+                loadBackups();
+            }
+        }
+        
+        // Обробник навігації
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.getAttribute('data-page');
+                navigateTo(page);
+            });
+        });
+        
+        // Функція для екранування HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Ініціалізація
+        async function init() {
+            await loadClasses();
+            await loadTeachersList();
+            await loadStats();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
