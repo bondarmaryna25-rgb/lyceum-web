@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Вхід | Технічний Ліцей</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Анімовані фонови елементи */
+    body::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        top: -150px;
+        right: -150px;
+        animation: float 20s infinite;
+    }
+
+    body::after {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        bottom: -100px;
+        left: -100px;
+        animation: float 15s infinite reverse;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, 20px); }
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 420px;
+        z-index: 1;
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .login-card {
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(10px);
+        border-radius: 32px;
+        padding: 40px 32px;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        transition: transform 0.3s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .logo {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .logo-icon {
+        font-size: 56px;
+        margin-bottom: 12px;
+    }
+
+    .logo h2 {
+        font-size: 28px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 6px;
+    }
+
+    .logo p {
+        color: #666;
+        font-size: 13px;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        color: #dc2626;
+        border-left: 4px solid #dc2626;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #16a34a;
+        border-left: 4px solid #16a34a;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon input {
+        width: 100%;
+        padding: 14px 16px;
+        padding-right: 45px;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        font-size: 15px;
+        transition: all 0.3s;
+        font-family: inherit;
+    }
+
+    .input-icon input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+
+    .input-icon .icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 18px;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        font-size: 20px;
+        color: #94a3b8;
+        transition: color 0.2s;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+    .toggle-password:hover {
+        color: #667eea;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        font-size: 13px;
+    }
+
+    .checkbox-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        color: #555;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+
+    .forgot-link {
+        color: #667eea;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(102,126,234,0.4);
+    }
+
+    .login-btn:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .demo-hint {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .demo-hint details {
+        cursor: pointer;
+    }
+
+    .demo-hint summary {
+        color: #667eea;
+        margin-bottom: 8px;
+    }
+
+    .demo-hint code {
+        background: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 11px;
+    }
+
+    /* Адаптивність */
+    @media (max-width: 480px) {
+        .login-card {
+            padding: 32px 24px;
+        }
+        
+        .logo h2 {
+            font-size: 24px;
+        }
+        
+        .input-icon input {
+            padding: 12px 14px;
+            padding-right: 42px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="logo">
+            <div class="logo-icon">🏫</div>
+            <h2>Технічний Ліцей</h2>
+            <p>Система керування освітою</p>
+        </div>
+
+        <!-- Повідомлення про помилку -->
+        {% if error %}
+        <div class="alert alert-error" id="error-message">
+            <span>⚠️</span>
+            <span>{{ error }}</span>
+            <button onclick="this.parentElement.style.display='none'" style="margin-left:auto; background:none; border:none; cursor:pointer; font-size:18px;">&times;</button>
+        </div>
+        {% endif %}
+
+        <!-- Повідомлення про успіх (наприклад, після виходу) -->
+        {% if message %}
+        <div class="alert alert-success">
+            <span>✅</span>
+            <span>{{ message }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST" id="login-form" action="/login">
+            <div class="input-group">
+                <label>📧 Логін або email</label>
+                <div class="input-icon">
+                    <input type="text" 
+                           name="username" 
+                           id="username"
+                           placeholder="Введіть ваш логін" 
+                           required 
+                           autocomplete="username"
+                           autofocus>
+                    <span class="icon">👤</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>🔒 Пароль</label>
+                <div class="input-icon">
+                    <input type="password" 
+                           name="password" 
+                           id="password"
+                           placeholder="Введіть пароль" 
+                           required
+                           autocomplete="current-password">
+                    <button type="button" class="toggle-password" onclick="togglePassword()" tabindex="-1">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="remember" id="remember">
+                    <span>Запам'ятати мене</span>
+                </label>
+                <a href="#" class="forgot-link" onclick="showForgotHint(event)">Забули пароль?</a>
+            </div>
+
+            <button type="submit" class="login-btn" id="login-btn">
+                Увійти до системи
+            </button>
+
+            <div class="demo-hint">
+                <details>
+                    <summary>📌 Тестові дані для входу</summary>
+                    <p style="margin-top: 10px; text-align: left;">
+                        <strong>Адміністратор:</strong><br>
+                        <code>admin</code> / <code>admin123</code><br><br>
+                        <strong>Вчитель:</strong><br>
+                        <code>teacher</code> / <code>teacher123</code><br><br>
+                        <strong>Учень:</strong><br>
+                        <code>student</code> / <code>student123</code>
+                    </p>
+                </details>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Змінні для запобігання подвійному відправленню
+    let isSubmitting = false;
+
+    // Показати/сховати пароль
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.toggle-password');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = '👁️';
+        }
+    }
+
+    // Обробка підказки "Забули пароль"
+    function showForgotHint(event) {
+        event.preventDefault();
+        const hint = document.createElement('div');
+        hint.className = 'alert alert-success';
+        hint.style.position = 'fixed';
+        hint.style.bottom = '20px';
+        hint.style.left = '50%';
+        hint.style.transform = 'translateX(-50%)';
+        hint.style.zIndex = '1000';
+        hint.style.maxWidth = '90%';
+        hint.style.width = 'auto';
+        hint.style.whiteSpace = 'nowrap';
+        hint.innerHTML = '📧 Зверніться до адміністратора: <strong>admin@lyceum.edu.ua</strong> <button onclick="this.parentElement.remove()" style="margin-left:12px; background:none; border:none; cursor:pointer;">✖️</button>';
+        document.body.appendChild(hint);
+        
+        // Автоматичне зникнення через 5 секунд
+        setTimeout(() => {
+            if (hint && hint.remove) hint.remove();
+        }, 5000);
+    }
+
+    // Валідація форми перед відправкою
+    function validateForm() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        if (username === '') {
+            showError('Будь ласка, введіть логін');
+            return false;
+        }
+        
+        if (password === '') {
+            showError('Будь ласка, введіть пароль');
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Показати помилку
+    function showError(message) {
+        const existingAlert = document.querySelector('.alert-error:not(#error-message)');
+        if (existingAlert) existingAlert.remove();
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-error';
+        errorDiv.innerHTML = `
+            <span>⚠️</span>
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()" style="margin-left:auto; background:none; border:none; cursor:pointer; font-size:18px;">&times;</button>
+        `;
+        
+        const form = document.getElementById('login-form');
+        form.insertBefore(errorDiv, form.firstChild);
+        
+        // Автоматичне зникнення через 3 секунди
+        setTimeout(() => {
+            if (errorDiv && errorDiv.remove) errorDiv.remove();
+        }, 3000);
+    }
+
+    // Обробка відправки форми
+    async function handleSubmit(event) {
+        event.preventDefault();
+        
+        if (isSubmitting) return;
+        
+        if (!validateForm()) return;
+        
+        isSubmitting = true;
+        const btn = document.getElementById('login-btn');
+        const originalText = btn.innerHTML;
+        
+        // Показуємо завантаження
+        btn.innerHTML = '<span class="loading-spinner"></span> Перевірка...';
+        btn.disabled = true;
+        
+        // Отримуємо дані форми
+        const formData = new FormData(event.target);
+        const username = formData.get('username');
+        const password = formData.get('password');
+        const remember = formData.get('remember') === 'on';
+        
+        try {
+            // Відправляємо запит на сервер
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    remember: remember
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Зберігаємо токен або дані в localStorage якщо потрібно
+                if (remember && result.token) {
+                    localStorage.setItem('auth_token', result.token);
+                    localStorage.setItem('user_role', result.role);
+                }
+                
+                // Перенаправлення на дашборд
+                window.location.href = result.redirect || '/dashboard';
+            } else {
+                showError(result.error || 'Невірний логін або пароль');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                isSubmitting = false;
+            }
+        } catch (error) {
+            console.error('Помилка:', error);
+            showError('Помилка з\'єднання з сервером. Спробуйте пізніше.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            isSubmitting = false;
+        }
+    }
+
+    // Додаємо обробник форми
+    const form = document.getElementById('login-form');
+    if (form) {
+        form.addEventListener('submit', handleSubmit);
+    }
+
+    // Завантаження збереженого логіну з localStorage
+    const savedUsername = localStorage.getItem('saved_username');
+    if (savedUsername) {
+        document.getElementById('username').value = savedUsername;
+        document.getElementById('remember').checked = true;
+    }
+
+    // Збереження логіну при успішному вході
+    function saveCredentials(username, remember) {
+        if (remember) {
+            localStorage.setItem('saved_username', username);
+        } else {
+            localStorage.removeItem('saved_username');
+        }
+    }
+
+    // Додаткова безпека: блокування контекстного меню на полях пароля (опціонально)
+    document.getElementById('password').addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // Підтримка клавіші Enter
+    document.getElementById('password').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            form.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // Очищення помилок при фокусі на полях
+    document.getElementById('username').addEventListener('focus', () => {
+        const error = document.querySelector('.alert-error');
+        if (error && error.id !== 'error-message') error.remove();
+    });
+    
+    document.getElementById('password').addEventListener('focus', () => {
+        const error = document.querySelector('.alert-error');
+        if (error && error.id !== 'error-message') error.remove();
+    });
+</script>
+
+</body>
+</html>
